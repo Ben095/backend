@@ -63,33 +63,15 @@ db = SQLAlchemy(app)
 from models import*
 
 
-
-@celery.task(ignore_result=True)
-def print_hello():
-    print 'hello there'
-
-
-@celery.task
-def gen_prime(x):
-    multiples = []
-    results = []
-    for i in xrange(2, x + 1):
-        if i not in multiples:
-            results.append(i)
-            for j in xrange(i * i, x + 1, i):
-                multiples.append(j)
-    return results
-
-
-@app.route('/outreach/<query>/results/')
-def FinalResults(query,username):
+@app.route('/outreach/<query>/results')
+def FinalResults(query):
     queryResults = Result.query.filter_by(query=query).first()
     task_id = queryResults.task_id
     res = AsyncResult(task_id)
     if "True" in res.ready():
         return jsonify(results=res.get())
     else:
-        return "Query is still being processed! Please wait!"
+        return "Query is still being processed! Please wait! status:" + str(res.ready())
 
 
 
