@@ -63,6 +63,66 @@ db = SQLAlchemy(app)
 from models import*
 
 
+
+@app.route('/instagram/<name>/results')
+def InstagramResult(name):
+    excelArr = []
+    dictionary = {}
+    responseID = requests.get('https://www.instagram.com/'+str(name)+'/?__a=1')
+    response = requests.get('https://www.instagram.com/'+str(name)+'/?__a=1').text
+    JSON = json.loads(response)
+    URL = 'https://www.instagram.com/'+str(name)
+    dictionary['url'] = URL
+    Username = JSON['user']['username']
+    dictionary['username'] = Username
+    Name = JSON['user']['full_name']
+    dictionary['name'] = Name
+    UID = JSON['user']['id']
+    dictionary['UID'] = UID
+    Followers = JSON['user']['followed_by']['count']
+    dictionary['followers'] = Followers
+    Following = JSON['user']['follows']['count']
+    dictionary['following'] = Following
+    Verified = JSON['user']['is_verified']
+    dictionary['verified'] = Verified
+    Uploads = JSON['user']['media']['count']
+    dictionary['uploads'] = Uploads
+    Private = JSON['user']['is_private']
+    dictionary['private'] = Private
+    Bio = JSON['user']['biography']
+    dictionary['bio'] = Bio
+    justTEXT = Bio.encode('ascii','ignore')
+    splitJustTEXT = justTEXT.split('\n')
+    URLFIELD = JSON['user']['external_url']
+    dictionary['external_url'] = URLFIELD
+    dictionary['snapchat'] = "None"
+    dictionary['email'] = "None"
+    for items in splitJustTEXT:
+        if "Snapchat" in items:
+            dictionary['snapchat'] = items
+        if "Snap" in items:
+            dictionary['snapchat'] = items
+
+        if "SNAPCHAT" in items:
+            dictionary['snapchat'] = items
+        if "snap" in items:
+            dictionary['snapchat'] = items
+
+        if "sc" in items:
+            dictionary['snapchat'] = items
+        if "." in items:
+            another_arr = items.split(' ')
+            for secondItems in another_arr:
+                if "." in secondItems:
+                    #print secondItems
+                    dictionary['email'] = secondItems
+    
+   # print dictionary
+    excelArr.append(dictionary)
+    return jsonify(results=excelArr)
+
+
+
 @app.route('/outreach/<query>/results')
 def FinalResults(query):
     queryResults = Result.query.filter_by(query=query).first()
@@ -98,8 +158,16 @@ def OutReacherDesk(query):
         response = requests.get('https://c.bingapis.com/api/custom/opal/otherpage/search?q=' + str(
             query) + '&first=' + str(i) + '&rnoreward=1', headers=headers).text
         LoadAsJson = json.loads(response)
-        actualItem = LoadAsJson['answers'][0]['webResults']
-        appendArr.append(actualItem)
+        try:
+            actualItem = LoadAsJson['answers'][0]['webResults']
+            appendArr.append(actualItem)
+        except:
+            response = requests.get('https://c.bingapis.com/api/custom/opal/otherpage/search?q=' + str(
+            query) + '&first=' + str(i) + '&rnoreward=1', headers=headers).text
+            LoadAsJson = json.loads(response)
+            actualItem = LoadAsJson['answers'][0]['webResults']
+            appendArr.append(actualItem)
+
 
     biggerArr.append(appendArr[
                      0] + appendArr[1] + appendArr[2] + appendArr[3] + appendArr[4] + appendArr[5])
