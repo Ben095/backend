@@ -12,3 +12,11 @@ class Result(db.Model):
     username = db.Column(db.String(100))
     task_id = db.Column(db.String(500))
     query = db.Column(db.String(500))
+
+
+class InstagramResult(db.Model):
+	__tablename__ = 'InstagramResult'
+	id = db.Column(db.Integer,primary_key=True)
+	ig_name = db.Column(db.String(100))
+	task_id = db.Column(db.String(100))
+	query = db.Column(db.String(100))

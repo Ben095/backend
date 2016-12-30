@@ -129,8 +129,10 @@ def igFunction(name):
     return excelArr
 
 
-@app.route('/instagram/<name>/results')
-def InstagramResult(name):
+##make a function that calls InstagramResult -> 
+## 
+@celery.task
+def InstagramMain(name):
     finalData = igFunction(name)
     outputDict = {}
     response = requests.get('https://www.instagram.com/'+str(name)+'/?__a=1').text
@@ -223,6 +225,26 @@ def InstagramResult(name):
     response = make_response(output.read())
     response.headers['Content-Disposition'] = "attachment; filename=output.csv"
     return response
+
+@app.route('/instagram/backend/<name>')
+def igbackendWorker(name):
+    instagram = InstagramMain.delay(name)
+    task_Id = instagram.task_id
+    add_data = InstagramResult(task_id=task_id,ig_name=name)
+    db.session.add(add_data)
+    db.session.commit()
+    return "Added to queue!"
+
+@app.route('/instagram/<name>/result')
+def GenerateResult(name):
+    queryName = InstagramResult.query.filter_by(name=name).first()
+    task_id = queryName.task_id
+    res = AsyncResult(task_id)
+    if "True" in res.ready():
+        return jsonify(results=res.get())
+    else:
+        return "Query is still being processed! Please wait! status:" + str(res.ready())
+
 
 @app.route('/outreach/<query>/results')
 def FinalResults(query):
