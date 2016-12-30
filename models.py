@@ -19,4 +19,3 @@ class InstagramResult(db.Model):
 	id = db.Column(db.Integer,primary_key=True)
 	ig_name = db.Column(db.String(100))
 	task_id = db.Column(db.String(100))
-	query = db.Column(db.String(100))
