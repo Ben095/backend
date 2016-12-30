@@ -61,11 +61,13 @@ db = SQLAlchemy(app)
 
 
 from models import*
-
+from InstagramAPI import InstagramAPI
 
 
 @app.route('/instagram/<name>/results')
 def InstagramResult(name):
+    ig = InstagramAPI("biplov_dahal", "123123123vb")
+    ig.login()
     excelArr = []
     dictionary = {}
     responseID = requests.get('https://www.instagram.com/'+str(name)+'/?__a=1')
@@ -79,6 +81,7 @@ def InstagramResult(name):
     dictionary['name'] = Name
     UID = JSON['user']['id']
     dictionary['UID'] = UID
+    dictionary['followers_people'] = ig.getUserFollowers(UID)
     Followers = JSON['user']['followed_by']['count']
     dictionary['followers'] = Followers
     Following = JSON['user']['follows']['count']
