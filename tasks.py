@@ -66,7 +66,7 @@ from InstagramAPI import InstagramAPI
 
 @app.route('/instagram/<name>/results')
 def InstagramResult(name):
-    ig = InstagramAPI("biplov_dahal", "123123123vb")
+    ig = InstagramAPI("OutReachTest", "outreach1234")
     ig.login()
     excelArr = []
     dictionary = {}
