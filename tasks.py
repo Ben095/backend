@@ -227,11 +227,11 @@ def InstagramMain(name):
                             worksheet.write_string(row+1,col+11,str(mini_items['email']))
                             worksheet.write_string(row+1,col+12,str(mini_items['UID']))
                             row +=1
-                            workbook.close()
-                            output.seek(0)
-                            response = make_response(output.read())
-                            response.headers['Content-Disposition'] = "attachment; filename=output.csv"
-                            return response
+                workbook.close()
+                output.seek(0)
+                response = make_response(output.read())
+                response.headers['Content-Disposition'] = "attachment; filename=output.csv"
+                return response
             workbook.close()
             output.seek(0)
             response = make_response(output.read())
@@ -253,12 +253,12 @@ def igbackendWorker(name):
 def GenerateResult(name):
     queryName = InstagramResult.query.filter_by(ig_name=name).first()
     task_id = queryName.task_id
-    v = cache.get('celery-task-%s' % session.get('task_id'))
-    if v:
-        print v
+  #  v = cache.get('celery-task-%s' % session.get('task_id'))
+    # if v:
+    #     print v
     res = AsyncResult(task_id)
     if "True" in str(res.ready()):
-        return "Task Completed!"
+        return res.get()
     else:
         return "Query is still being processed! Please wait! status:" + str(res.ready())
 
