@@ -202,6 +202,11 @@ def InstagramMain(name):
                             worksheet.write_string(row,col+10,str(self_user_info['external_url']))
                             worksheet.write_string(row,col+11,str(self_user_info['email']))
                             worksheet.write_string(row,col+12,str(self_user_info['UID']))
+                            workbook.close()
+                            output.seek(0)
+                            response = make_response(output.read())
+                            response.headers['Content-Disposition'] = "attachment; filename=output.csv"
+                            return response
                 for items in lst1:
                     each_items = items
                     for mini_items in each_items:
@@ -222,23 +227,23 @@ def InstagramMain(name):
                             worksheet.write_string(row+1,col+11,str(mini_items['email']))
                             worksheet.write_string(row+1,col+12,str(mini_items['UID']))
                             row +=1
-                workbook.close()
-                output.seek(0)
-                response = make_response(output.read())
-                response.headers['Content-Disposition'] = "attachment; filename=output.csv"
-                return response
-            # workbook.close()
-            # output.seek(0)
-            # response = make_response(output.read())
-            # response.headers['Content-Disposition'] = "attachment; filename=output.csv"
-            # return response
+                            workbook.close()
+                            output.seek(0)
+                            response = make_response(output.read())
+                            response.headers['Content-Disposition'] = "attachment; filename=output.csv"
+                            return response
+            workbook.close()
+            output.seek(0)
+            response = make_response(output.read())
+            response.headers['Content-Disposition'] = "attachment; filename=output.csv"
+            return response
         except:
             pass
 
 @app.route('/instagram/backend/<name>')
 def igbackendWorker(name):
     instagram = InstagramMain.delay(name)
-    task_Id = instagram.task_id
+    task_id = instagram.task_id
     add_data = InstagramResult(task_id=task_id,ig_name=name)
     db.session.add(add_data)
     db.session.commit()
