@@ -90,7 +90,6 @@ s.mount('http://', RetryHTTPAdapter(retry_time=180))
 s.mount('https://', RetryHTTPAdapter(retry_time=180))
 
 def igFunction(name):
-    try:
         excelArr = []
         dictionary = {}
         #responseID = s.get('https://www.instagram.com/'+str(name)+'/?__a=1')
@@ -116,38 +115,39 @@ def igFunction(name):
         dictionary['private'] = Private
         Bio = JSON['user']['biography']
         dictionary['bio'] = Bio
-        justTEXT = Bio.encode('ascii','ignore')
-        splitJustTEXT = justTEXT.split('\n')
         URLFIELD = JSON['user']['external_url']
         dictionary['external_url'] = URLFIELD
         dictionary['snapchat'] = "None"
-        #emails = re.findall(r'[\w\.-]+@[\w\.-]+', splitJustTEXT) 
-        dictionary['email']=''
-        for items in splitJustTEXT:
-            if "Snapchat" in items:
-                dictionary['snapchat'] = items
-            if "Snap" in items:
-                dictionary['snapchat'] = items
+        try:
+            justTEXT = Bio.encode('ascii','ignore')
+            splitJustTEXT = justTEXT.split('\n')
+            #emails = re.findall(r'[\w\.-]+@[\w\.-]+', splitJustTEXT) 
+            dictionary['email']=''
+            for items in splitJustTEXT:
+                if "Snapchat" in items:
+                    dictionary['snapchat'] = items
+                if "Snap" in items:
+                    dictionary['snapchat'] = items
 
-            if "SNAPCHAT" in items:
-                dictionary['snapchat'] = items
-            if "snap" in items:
-                dictionary['snapchat'] = items
+                if "SNAPCHAT" in items:
+                    dictionary['snapchat'] = items
+                if "snap" in items:
+                    dictionary['snapchat'] = items
 
-            if "sc" in items:
-                dictionary['snapchat'] = items
-            match = re.search(r'[\w.-]+@[\w.-]+.\w+', items)
-	    if match:
-		try:
-	     		 dictionary['email']=match.group().split('')[0]
-		except:
-			 dictionary['email']=match.group()
+                if "sc" in items:
+                    dictionary['snapchat'] = items
+                match = re.search(r'[\w.-]+@[\w.-]+.\w+', items)
+    	    if match:
+    		try:
+    	     		 dictionary['email']=match.group().split('')[0]
+    		except:
+    			 dictionary['email']=match.group()
+        except:
+            pass
 		
        # print dictionary
         excelArr.append(dictionary)
-    except:
-        pass
-    return excelArr
+        return excelArr
 
 
 ##make a function that calls InstagramResult -> 
@@ -224,10 +224,22 @@ def InstagramMain(name):
             for items in lst1:
                 each_items = items
                 for mini_items in each_items:
-                        worksheet.write_string(row+1,col,str(mini_items['username']))
-                        worksheet.write_string(row+1,col+1,str(mini_items['bio'].encode('ascii','ignore')))
-                        worksheet.write_string(row+1,col+2,str(mini_items['snapchat']))
-                        worksheet.write_string(row+1,col+3,str(mini_items['verified']))
+                        try:
+                            worksheet.write_string(row+1,col,str(mini_items['username']))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row+1,col+1,str(mini_items['bio'].encode('ascii','ignore')))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row+1,col+2,str(mini_items['snapchat']))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row+1,col+3,str(mini_items['verified']))
+                        except:
+                            pass
                         try:
                             worksheet.write_string(row+1,col+4, str(mini_items['name'].encode('ascii','ignore')))
                         except:
@@ -238,7 +250,10 @@ def InstagramMain(name):
                         worksheet.write_string(row+1,col+8,str(mini_items['uploads']))
                         worksheet.write_string(row+1,col+9,str(mini_items['following']))
                         worksheet.write_string(row+1,col+10,str(mini_items['external_url']))
-                        worksheet.write_string(row+1,col+11,str(mini_items['email']))
+                        try:
+                            worksheet.write_string(row+1,col+11,str(mini_items['email']))
+                        except:
+                            pass
                         worksheet.write_string(row+1,col+12,str(mini_items['UID']))
                         row +=1
         workbook.close()
@@ -313,8 +328,6 @@ def OutReacherDesk(query):
             LoadAsJson = json.loads(response)
             actualItem = LoadAsJson['answers'][0]['webResults']
             appendArr.append(actualItem)
-
-
     biggerArr.append(appendArr[
                      0] + appendArr[1] + appendArr[2] + appendArr[3] + appendArr[4] + appendArr[5])
     rearr = []
@@ -342,43 +355,34 @@ def OutReacherDesk(query):
                 bingDictionary['whoisData'] = "None"
                 bingDictionary['social_shares'] = "None"
                 miniArz = []
-                resp = requests.get(whoisAPI)
-                loadAsJson = json.loads(resp.text)
+                response = requests.get('http://104.131.43.184/whois/'+str(fixedDomain)).text
+                loadAsJson = json.loads(response)
                 whoisDictionary = {}
                 try:
                     whoisDictionary['domain_name'] = loadAsJson['domain_name']
                 except:
                     whoisDictionary['domain_name'] = "None"
                 try:
-                    whoisDictionary['whois_full_name'] = loadAsJson[
-                        'registrant_contact']['full_name']
+                    whoisDictionary['whois_full_name'] = loadAsJson['registrant']['name']
                 except:
                     whoisDictionary['whois_full_name'] = "None"
                 try:
-                    whoisDictionary['whois_company_name'] = loadAsJson[
-                        'registrant_contact']['company_name']
-                except:
-                    whoisDictionary['whois_company_name'] = "None"
-                try:
-                    whoisDictionary['whois_city_name'] = loadAsJson[
-                        'registrant_contact']['city_name']
+                    whoisDictionary['whois_city_name'] = loadAsJson['registrant']['city_name']
                 except:
                     whoisDictionary['whois_city_name'] = "None"
                 try:
-                    whoisDictionary['whois_country_name'] = loadAsJson[
-                        'registrant_contact']['country_name']
+                    whoisDictionary['whois_country_code'] = loadAsJson['registrant']['country_code']
                 except:
-                    whoisDictionary['whois_country_name'] = "None"
+                    whoisDictionary['whois_country_code'] = "None"
                 try:
-                    whoisDictionary['whois_email_address'] = loadAsJson[
-                        'registrant_contact']['email_address']
+                    whoisDictionary['whois_email_address'] = loadAsJson['registrant']['email']
                 except:
-                    whoisDictionary['whois_email_address'] = "None"
+                    whoisDictionary['whois_email_address']="None"
                 try:
-                    whoisDictionary['whois_phone_number'] = loadAsJson[
-                        'registrant_contact']['phone_number']
+                    whoisDictionary['whois_phone_number'] = loadAsJson['registrant']['phone_number']
                 except:
                     whoisDictionary['whois_phone_number'] = "None"
+                print whoisDictionary
                 miniArz.append(whoisDictionary)
                 bingDictionary['whoisData'] = miniArz
                 rearr.append(bingDictionary)
@@ -388,3 +392,5 @@ def OutReacherDesk(query):
    
 if __name__ == '__main__':
     app.run()
+
+
