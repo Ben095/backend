@@ -466,13 +466,11 @@ class InstagramAPI:
     def getSelfUsersFollowing(self):
         return self.getUserFollowings(self.username_id)
 
+
     def getUserFollowers(self, usernameId, maxid = ''):
         if maxid == '':
-            self.SendRequest('friendships/'+ str(usernameId) +'/followers/?rank_token='+ self.rank_token)
             return self.SendRequest('friendships/'+ str(usernameId) +'/followers/?rank_token='+ self.rank_token)
         else:
-           # print "EATER"
-           # print self.SendRequest('friendships/'+ str(usernameId) +'/followers/?rank_token='+ self.rank_token + '&max_id='+ str(maxid))
             return self.SendRequest('friendships/'+ str(usernameId) +'/followers/?rank_token='+ self.rank_token + '&max_id='+ str(maxid))
 
     def getSelfUserFollowers(self):
@@ -627,19 +625,30 @@ class InstagramAPI:
                 pass
             return False
             
-    def getTotalFollowers(self,usernameId):
-        followers = []
-        next_max_id = ''
-        while 1:
-            self.getUserFollowers(usernameId,next_max_id)
+    def getTotalFollowersID2(self,usernameId):
+        try:
+            followers = []
+            next_max_id = ''
+            g = self.getUserFollowers(usernameId,next_max_id)
             temp = self.LastJson
+            while 1:
+                while g==False:
+                    print("wait")
+                    time.sleep(3*60)
+                    g = self.getUserFollowers(usernameId,next_max_id)
+                    temp = self.LastJson
 
-            for item in temp["users"]:
-                followers.append(item)
 
-            if temp["big_list"] == False:
-                return followers            
-            next_max_id = temp["next_max_id"]         
+                for item in temp["users"]:
+                    followers.append(item)
+
+                if temp["big_list"] == False:
+                    return followers
+                next_max_id = temp["next_max_id"]
+                g = self.getUserFollowers(usernameId,next_max_id)
+                temp = self.LastJson
+        except:
+            pass
 
     def getTotalFollowings(self,usernameId):
         followers = []

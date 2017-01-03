@@ -39,7 +39,7 @@ import sys
 from Queue import Queue
 import logging
 import requests
-
+from requests.adapters import HTTPAdapter 
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 from celery import Celery
@@ -69,13 +69,32 @@ db = SQLAlchemy(app)
 from models import*
 from InstagramAPI import InstagramAPI
 
+class RetryHTTPAdapter(HTTPAdapter):
+
+    SECONDS_BETWEEN_RETRIES = 5
+
+    def __init__(self, retry_time=120, *args, **kwargs):
+        self.retry_time = retry_time
+        super(RetryHTTPAdapter, self).__init__(*args, **kwargs)
+
+    def send(self, *args, **kwargs):
+        for _ in range(int(self.retry_time / self.SECONDS_BETWEEN_RETRIES)):
+            response = super(RetryHTTPAdapter, self).send(*args, **kwargs)
+            if response.status_code == httplib.OK:
+                break
+            time.sleep(self.SECONDS_BETWEEN_RETRIES)
+        return response
+
+s = requests.Session()
+s.mount('http://', RetryHTTPAdapter(retry_time=180))
+s.mount('https://', RetryHTTPAdapter(retry_time=180))
 
 def igFunction(name):
     try:
         excelArr = []
         dictionary = {}
-        responseID = requests.get('https://www.instagram.com/'+str(name)+'/?__a=1')
-        response = requests.get('https://www.instagram.com/'+str(name)+'/?__a=1').text
+        #responseID = s.get('https://www.instagram.com/'+str(name)+'/?__a=1')
+        response = s.get('https://www.instagram.com/'+str(name)+'/?__a=1').text
         JSON = json.loads(response)
         URL = 'https://www.instagram.com/'+str(name)
         dictionary['url'] = URL
@@ -102,7 +121,8 @@ def igFunction(name):
         URLFIELD = JSON['user']['external_url']
         dictionary['external_url'] = URLFIELD
         dictionary['snapchat'] = "None"
-        dictionary['email'] = "None"
+        #emails = re.findall(r'[\w\.-]+@[\w\.-]+', splitJustTEXT) 
+        dictionary['email']=''
         for items in splitJustTEXT:
             if "Snapchat" in items:
                 dictionary['snapchat'] = items
@@ -116,12 +136,13 @@ def igFunction(name):
 
             if "sc" in items:
                 dictionary['snapchat'] = items
-            if "." in items:
-                another_arr = items.split(' ')
-                for secondItems in another_arr:
-                    if "." in secondItems:
-                        dictionary['email'] = secondItems
-        
+            match = re.search(r'[\w.-]+@[\w.-]+.\w+', items)
+	    if match:
+		try:
+	     		 dictionary['email']=match.group().split('')[0]
+		except:
+			 dictionary['email']=match.group()
+		
        # print dictionary
         excelArr.append(dictionary)
     except:
@@ -134,106 +155,97 @@ def igFunction(name):
 @celery.task
 def InstagramMain(name):
     with app.app_context():
-        try:
-            finalData = igFunction(name)
-            outputDict = {}
-            response = requests.get('https://www.instagram.com/'+str(name)+'/?__a=1').text
-            JSON = json.loads(response)
-            UID = JSON['user']['id']
-
-            ig = InstagramAPI("OutReachTest", "outreach1234")
-            ig.login()
-            main_list = ig.getUserFollowers(UID)['users']
-            finalArr = []
-            finalOutput = []
-            for items in main_list:
-                try:
-                    username = items['username']
-                    print username
-                    finalArr.append(igFunction(username))
-                except:
-                    pass
-            outputDict['self_user_info'] = finalData
-            outputDict['each_followers_data'] = finalArr
-            finalOutput.append(outputDict)
-
+        finalData = igFunction(name)
+        outputDict = {}
+        response = s.get('https://www.instagram.com/'+str(name)+'/?__a=1').text
+        JSON = json.loads(response)
+        UID = JSON['user']['id']
+        ig = InstagramAPI("OutReachTest", "outreach1234")
+        ig.login()
+        main_list = ig.getTotalFollowersID2(UID)
+        finalArr = []
+        finalOutput = []
+        for items in main_list:
+            try:
+                username = items['username']
+                print username
+                finalArr.append(igFunction(username))
+            except TypeError:
+                pass
+        outputDict['self_user_info'] = finalData
+        outputDict['each_followers_data'] = finalArr
+        finalOutput.append(outputDict)
+	print finalOutput
 
 
-            output = StringIO.StringIO()
-            workbook = xlsxwriter.Workbook(output)
-           # workbook = xlsxwriter.Workbook('output.xlsx')
-            worksheet = workbook.add_worksheet()
-            worksheet.set_column(1, 1, 15)
-            bold = workbook.add_format({'bold': 1})
-            worksheet.write('A1', 'username', bold)
-            worksheet.write('B1', 'bio', bold)
-            worksheet.write('C1', 'snapchat', bold)
-            worksheet.write('D1', 'verified', bold)
-            worksheet.write('E1', 'name', bold)
-            worksheet.write('F1', 'url', bold)
-            worksheet.write('G1', 'private', bold)
-            worksheet.write('H1', 'followers', bold)
-            worksheet.write('I1', 'uploads', bold)
-            worksheet.write('J1','following',bold)
-            worksheet.write('K1', 'external_url', bold)
-            worksheet.write('L1', 'email', bold)
-            worksheet.write('M1', 'UID', bold)
-            row = 1
-            col = 0
-            for items in finalOutput:
-                lst1 = items['each_followers_data']
-                lst2 = items['self_user_info']
-                for second_items in lst2:
-                    self_user_info = second_items
-                    for mini_s_items in self_user_info:
-                            worksheet.write_string(row,col,str(self_user_info['username']))
-                            worksheet.write_string(row,col+1,str(self_user_info['bio'].encode('ascii','ignore')))
-                            worksheet.write_string(row,col+2,str(self_user_info['snapchat']))
-                            worksheet.write_string(row,col+3,str(self_user_info['verified']))
-                            try:
-                                worksheet.write_string(row+1,col+4, str(self_user_info['name'].encode('ascii','ignore')))
-                            except:
-                                pass
-                            worksheet.write_string(row,col+5,str(self_user_info['url']))
-                            worksheet.write_string(row,col+6,str(self_user_info['private']))
-                            worksheet.write_string(row,col+7,str(self_user_info['followers']))
-                            worksheet.write_string(row,col+8,str(self_user_info['uploads']))
-                            worksheet.write_string(row,col+9,str(self_user_info['following']))
-                            worksheet.write_string(row,col+10,str(self_user_info['external_url']))
-                            worksheet.write_string(row,col+11,str(self_user_info['email']))
-                            worksheet.write_string(row,col+12,str(self_user_info['UID']))
-                            workbook.close()
-                            output.seek(0)
-                            response = make_response(output.read())
-                            response.headers['Content-Disposition'] = "attachment; filename=output.csv"
-                            return response
-                for items in lst1:
-                    each_items = items
-                    for mini_items in each_items:
-                            worksheet.write_string(row+1,col,str(mini_items['username']))
-                            worksheet.write_string(row+1,col+1,str(mini_items['bio'].encode('ascii','ignore')))
-                            worksheet.write_string(row+1,col+2,str(mini_items['snapchat']))
-                            worksheet.write_string(row+1,col+3,str(mini_items['verified']))
-                            try:
-                                worksheet.write_string(row+1,col+4, str(mini_items['name'].encode('ascii','ignore')))
-                            except:
-                                pass
-                            worksheet.write_string(row+1,col+5,str(mini_items['url']))
-                            worksheet.write_string(row+1,col+6,str(mini_items['private']))
-                            worksheet.write_string(row+1,col+7,str(mini_items['followers']))
-                            worksheet.write_string(row+1,col+8,str(mini_items['uploads']))
-                            worksheet.write_string(row+1,col+9,str(mini_items['following']))
-                            worksheet.write_string(row+1,col+10,str(mini_items['external_url']))
-                            worksheet.write_string(row+1,col+11,str(mini_items['email']))
-                            worksheet.write_string(row+1,col+12,str(mini_items['UID']))
-                            row +=1
-            workbook.close()
-            output.seek(0)
-            response = make_response(output.read())
-            response.headers['Content-Disposition'] = "attachment; filename=output.csv"
-            return response
-        except:
-            pass
+        output = StringIO.StringIO()
+        workbook = xlsxwriter.Workbook(output)
+       # workbook = xlsxwriter.Workbook('output.xlsx')
+        worksheet = workbook.add_worksheet()
+        worksheet.set_column(1, 1, 15)
+        bold = workbook.add_format({'bold': 1})
+        worksheet.write('A1', 'username', bold)
+        worksheet.write('B1', 'bio', bold)
+        worksheet.write('C1', 'snapchat', bold)
+        worksheet.write('D1', 'verified', bold)
+        worksheet.write('E1', 'name', bold)
+        worksheet.write('F1', 'url', bold)
+        worksheet.write('G1', 'private', bold)
+        worksheet.write('H1', 'followers', bold)
+        worksheet.write('I1', 'uploads', bold)
+        worksheet.write('J1','following',bold)
+        worksheet.write('K1', 'external_url', bold)
+        worksheet.write('L1', 'email', bold)
+        worksheet.write('M1', 'UID', bold)
+        row = 1
+        col = 0
+        for items in finalOutput:
+            lst1 = items['each_followers_data']
+            lst2 = items['self_user_info']
+            for second_items in lst2:
+                self_user_info = second_items
+                for mini_s_items in self_user_info:
+                        worksheet.write_string(row,col,str(self_user_info['username']))
+                        worksheet.write_string(row,col+1,str(self_user_info['bio'].encode('ascii','ignore')))
+                        worksheet.write_string(row,col+2,str(self_user_info['snapchat']))
+                        worksheet.write_string(row,col+3,str(self_user_info['verified']))
+                        try:
+                            worksheet.write_string(row+1,col+4, str(self_user_info['name'].encode('ascii','ignore')))
+                        except:
+                            pass
+                        worksheet.write_string(row,col+5,str(self_user_info['url']))
+                        worksheet.write_string(row,col+6,str(self_user_info['private']))
+                        worksheet.write_string(row,col+7,str(self_user_info['followers']))
+                        worksheet.write_string(row,col+8,str(self_user_info['uploads']))
+                        worksheet.write_string(row,col+9,str(self_user_info['following']))
+                        worksheet.write_string(row,col+10,str(self_user_info['external_url']))
+                        worksheet.write_string(row,col+11,str(self_user_info['email']))
+                        worksheet.write_string(row,col+12,str(self_user_info['UID']))
+            for items in lst1:
+                each_items = items
+                for mini_items in each_items:
+                        worksheet.write_string(row+1,col,str(mini_items['username']))
+                        worksheet.write_string(row+1,col+1,str(mini_items['bio'].encode('ascii','ignore')))
+                        worksheet.write_string(row+1,col+2,str(mini_items['snapchat']))
+                        worksheet.write_string(row+1,col+3,str(mini_items['verified']))
+                        try:
+                            worksheet.write_string(row+1,col+4, str(mini_items['name'].encode('ascii','ignore')))
+                        except:
+                            pass
+                        worksheet.write_string(row+1,col+5,str(mini_items['url']))
+                        worksheet.write_string(row+1,col+6,str(mini_items['private']))
+                        worksheet.write_string(row+1,col+7,str(mini_items['followers']))
+                        worksheet.write_string(row+1,col+8,str(mini_items['uploads']))
+                        worksheet.write_string(row+1,col+9,str(mini_items['following']))
+                        worksheet.write_string(row+1,col+10,str(mini_items['external_url']))
+                        worksheet.write_string(row+1,col+11,str(mini_items['email']))
+                        worksheet.write_string(row+1,col+12,str(mini_items['UID']))
+                        row +=1
+        workbook.close()
+        output.seek(0)
+        response = make_response(output.read())
+        response.headers['Content-Disposition'] = "attachment; filename=output.csv"
+        return response
 
 @app.route('/instagram/backend/<name>')
 def igbackendWorker(name):
@@ -256,7 +268,6 @@ def GenerateResult(name):
         return res.get()
     else:
         return "Query is still being processed! Please wait! status:" + str(res.ready())
-
 
 @app.route('/outreach/<query>/results')
 def FinalResults(query):
