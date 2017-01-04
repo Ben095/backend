@@ -171,7 +171,7 @@ def InstagramMain(name):
             response = s.get('https://www.instagram.com/'+str(name)+'/?__a=1').text
             JSON = json.loads(response)
             UID = JSON['user']['id']
-            ig = InstagramAPI("OutReachTest", "outreach1234")
+            ig = InstagramAPI("benjidahal", "123123123vb")
             ig.login()
             main_list = ig.getTotalFollowersID2(UID)
             finalArr = []
@@ -405,6 +405,7 @@ def OutReacherDesk(query):
    
 if __name__ == '__main__':
     app.run()
+
 
 
 
