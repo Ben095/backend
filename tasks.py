@@ -56,7 +56,7 @@ try:
 except ImportError:
     import StringIO
 
-
+import lepl.apps.rfc3696
 rearr = []
 celery = Celery('tasks', backend='amqp', broker='amqp://')
 log = logging.getLogger(__name__)
@@ -123,9 +123,14 @@ def igFunction(name):
             justTEXT = Bio.encode('ascii','ignore')
             splitJustTEXT = justTEXT.split('\n')
             #emails = re.findall(r'[\w\.-]+@[\w\.-]+', splitJustTEXT) 
-            emails = re.search(r'[\w\.-]+@[\w\.-]+', justTEXT))
+            emails = re.search(r'[\w\.-]+@[\w\.-]+', justTEXT)
             if emails:
-                dictionary['email'] = emails.group()
+                email_string = emails.group()
+                email_validator = lepl.apps.rfc3696.Email()
+                if not email_validator(email_string):
+                    pass
+                else:
+                    dictionary['email'] = email_string
             #dictionary['email']=''
             for items in splitJustTEXT:
                 if "Snapchat" in items:
@@ -214,22 +219,58 @@ def InstagramMain(name):
             for second_items in lst2:
                 self_user_info = second_items
                 for mini_s_items in self_user_info:
-                        worksheet.write_string(row,col,str(self_user_info['username']))
-                        worksheet.write_string(row,col+1,str(self_user_info['bio'].encode('ascii','ignore')))
-                        worksheet.write_string(row,col+2,str(self_user_info['snapchat']))
-                        worksheet.write_string(row,col+3,str(self_user_info['verified']))
+                        try:
+                            worksheet.write_string(row,col,str(self_user_info['username']))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row,col+1,str(self_user_info['bio'].encode('ascii','ignore')))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row,col+2,str(self_user_info['snapchat']))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row,col+3,str(self_user_info['verified']))
+                        except:
+                            pass
                         try:
                             worksheet.write_string(row+1,col+4, str(self_user_info['name'].encode('ascii','ignore')))
                         except:
                             pass
-                        worksheet.write_string(row,col+5,str(self_user_info['url']))
-                        worksheet.write_string(row,col+6,str(self_user_info['private']))
-                        worksheet.write_string(row,col+7,str(self_user_info['followers']))
-                        worksheet.write_string(row,col+8,str(self_user_info['uploads']))
-                        worksheet.write_string(row,col+9,str(self_user_info['following']))
-                        worksheet.write_string(row,col+10,str(self_user_info['external_url']))
-                        worksheet.write_string(row,col+11,str(self_user_info['email']))
-                        worksheet.write_string(row,col+12,str(self_user_info['UID']))
+                        try:
+                            worksheet.write_string(row,col+5,str(self_user_info['url']))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row,col+6,str(self_user_info['private']))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row,col+7,str(self_user_info['followers']))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row,col+8,str(self_user_info['uploads']))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row,col+9,str(self_user_info['following']))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row,col+10,str(self_user_info['external_url']))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row,col+11,str(self_user_info['email']))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row,col+12,str(self_user_info['UID']))
+                        except:
+                            pass
             for items in lst1:
                 each_items = items
                 for mini_items in each_items:
@@ -253,12 +294,30 @@ def InstagramMain(name):
                             worksheet.write_string(row+1,col+4, str(mini_items['name'].encode('ascii','ignore')))
                         except:
                             pass
-                        worksheet.write_string(row+1,col+5,str(mini_items['url']))
-                        worksheet.write_string(row+1,col+6,str(mini_items['private']))
-                        worksheet.write_string(row+1,col+7,str(mini_items['followers']))
-                        worksheet.write_string(row+1,col+8,str(mini_items['uploads']))
-                        worksheet.write_string(row+1,col+9,str(mini_items['following']))
-                        worksheet.write_string(row+1,col+10,str(mini_items['external_url']))
+                        try:
+                            worksheet.write_string(row+1,col+5,str(mini_items['url']))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row+1,col+6,str(mini_items['private']))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row+1,col+7,str(mini_items['followers']))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row+1,col+8,str(mini_items['uploads']))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row+1,col+9,str(mini_items['following']))
+                        except:
+                            pass
+                        try:
+                            worksheet.write_string(row+1,col+10,str(mini_items['external_url']))
+                        except:
+                            pass
                         try:
                             worksheet.write_string(row+1,col+11,str(mini_items['email']))
                         except:
@@ -401,5 +460,6 @@ def OutReacherDesk(query):
    
 if __name__ == '__main__':
     app.run()
+
 
 
