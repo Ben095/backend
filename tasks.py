@@ -178,7 +178,7 @@ def InstagramMain(name):
             response = s.get('https://www.instagram.com/'+str(name)+'/?__a=1').text
             JSON = json.loads(response)
             UID = JSON['user']['id']
-            ig = InstagramAPI("OutReachTest", "outreach1234")
+            ig = InstagramAPI("benji4108605", "123123123vb")
             ig.login()
             main_list = ig.getTotalFollowersID2(UID)
             finalArr = []
@@ -279,57 +279,60 @@ def InstagramMain(name):
                                 pass
                 for items in lst1:
                     each_items = items
-                    for mini_items in each_items:
-                            try:
-                                worksheet.write_string(row+1,col,str(mini_items['username']))
-                            except:
-                                pass
-                            try:
-                                worksheet.write_string(row+1,col+1,str(mini_items['bio'].encode('ascii','ignore')))
-                            except:
-                                pass
-                            try:
-                                worksheet.write_string(row+1,col+2,str(mini_items['snapchat']))
-                            except:
-                                pass
-                            try:
-                                worksheet.write_string(row+1,col+3,str(mini_items['verified']))
-                            except:
-                                pass
-                            try:
-                                worksheet.write_string(row+1,col+4, str(mini_items['name'].encode('ascii','ignore')))
-                            except:
-                                pass
-                            try:
-                                worksheet.write_string(row+1,col+5,str(mini_items['url']))
-                            except:
-                                pass
-                            try:
-                                worksheet.write_string(row+1,col+6,str(mini_items['private']))
-                            except:
-                                pass
-                            try:
-                                worksheet.write_string(row+1,col+7,str(mini_items['followers']))
-                            except:
-                                pass
-                            try:
-                                worksheet.write_string(row+1,col+8,str(mini_items['uploads']))
-                            except:
-                                pass
-                            try:
-                                worksheet.write_string(row+1,col+9,str(mini_items['following']))
-                            except:
-                                pass
-                            try:
-                                worksheet.write_string(row+1,col+10,str(mini_items['external_url']))
-                            except:
-                                pass
-                            try:
-                                worksheet.write_string(row+1,col+11,str(mini_items['email']))
-                            except:
-                                pass
-                            worksheet.write_string(row+1,col+12,str(mini_items['UID']))
-                            row +=1
+                    try:
+                        for mini_items in each_items:
+                                try:
+                                    worksheet.write_string(row+1,col,str(mini_items['username']))
+                                except:
+                                    pass
+                                try:
+                                    worksheet.write_string(row+1,col+1,str(mini_items['bio'].encode('ascii','ignore')))
+                                except:
+                                    pass
+                                try:
+                                    worksheet.write_string(row+1,col+2,str(mini_items['snapchat']))
+                                except:
+                                    pass
+                                try:
+                                    worksheet.write_string(row+1,col+3,str(mini_items['verified']))
+                                except:
+                                    pass
+                                try:
+                                    worksheet.write_string(row+1,col+4, str(mini_items['name'].encode('ascii','ignore')))
+                                except:
+                                    pass
+                                try:
+                                    worksheet.write_string(row+1,col+5,str(mini_items['url']))
+                                except:
+                                    pass
+                                try:
+                                    worksheet.write_string(row+1,col+6,str(mini_items['private']))
+                                except:
+                                    pass 
+                                try:
+                                    worksheet.write_string(row+1,col+7,str(mini_items['followers']))
+                                except:
+                                    pass
+                                try:
+                                    worksheet.write_string(row+1,col+8,str(mini_items['uploads']))
+                                except:
+                                    pass
+                                try:
+                                    worksheet.write_string(row+1,col+9,str(mini_items['following']))
+                                except:
+                                    pass
+                                try:
+                                    worksheet.write_string(row+1,col+10,str(mini_items['external_url']))
+                                except:
+                                    pass
+                                try:
+                                    worksheet.write_string(row+1,col+11,str(mini_items['email']))
+                                except:
+                                    pass
+                                worksheet.write_string(row+1,col+12,str(mini_items['UID']))
+                                row +=1
+                    except:
+                        pass
             workbook.close()
             output.seek(0)
             response = make_response(output.read())
@@ -468,6 +471,7 @@ def OutReacherDesk(query):
    
 if __name__ == '__main__':
     app.run()
+
 
 
 
