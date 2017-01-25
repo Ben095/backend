@@ -123,16 +123,22 @@ def igFunction(name):
         try:
             justTEXT = Bio.encode('ascii','ignore')
             splitJustTEXT = justTEXT.split('\n')
-            #emails = re.findall(r'[\w\.-]+@[\w\.-]+', splitJustTEXT) 
             emails = re.search(r'[\w\.-]+@[\w\.-]+', justTEXT)
             if emails:
-                email_string = emails.group()
-                email_validator = lepl.apps.rfc3696.Email()
-                if not email_validator(email_string):
-                    pass
-                else:
-                    dictionary['email'] = email_string
-            #dictionary['email']=''
+                if "." in emails.group()[-1]:
+                    new_emails = emails.group()[:-1]
+                    email_validator = lepl.apps.rfc3696.Email()
+                    if not email_validator(new_emails):
+                        pass
+                    else:
+                        dictionary['email'] = new_emails
+                else:               
+                    email_string = emails.group()
+                    email_validator = lepl.apps.rfc3696.Email()
+                    if not email_validator(email_string):
+                        pass
+                    else:
+                        dictionary['email'] = email_string
             for items in splitJustTEXT:
                 if "Snapchat" in items:
                     dictionary['snapchat'] = items
@@ -146,7 +152,6 @@ def igFunction(name):
 
                 if "sc" in items:
                     dictionary['snapchat'] = items
-                # if dictionary['email'] is None:
                 match = re.search(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", items)
                 if match:
                         dictionary['email'] = match.group()
@@ -170,6 +175,7 @@ def igFunction(name):
 ##make a function that calls InstagramResult -> 
 ## 
 @celery.task
+@app.route('/instagram/<name>')
 def InstagramMain(name):
     with app.app_context():
         try:
@@ -178,7 +184,7 @@ def InstagramMain(name):
             response = s.get('https://www.instagram.com/'+str(name)+'/?__a=1').text
             JSON = json.loads(response)
             UID = JSON['user']['id']
-            ig = InstagramAPI("benji4108605", "123123123vb")
+            ig = InstagramAPI("OutReachTest", "outreach1234")
             ig.login()
             main_list = ig.getTotalFollowersID2(UID)
             finalArr = []
@@ -225,6 +231,7 @@ def InstagramMain(name):
                 for second_items in lst2:
                     self_user_info = second_items
                     for mini_s_items in self_user_info:
+
                             try:
                                 worksheet.write_string(row,col,str(self_user_info['username']))
                             except:
@@ -326,7 +333,27 @@ def InstagramMain(name):
                                 except:
                                     pass
                                 try:
-                                    worksheet.write_string(row+1,col+11,str(mini_items['email']))
+                                    bio = mini_items['bio'].encode('ascii','ignore')
+                                except:
+                                    pass
+                                try:
+                                    bio = mini_items['bio'].encode('ascii','ignore')
+                                    emails = re.search(r'[\w\.-]+@[\w\.-]+',bio)
+                                    #worksheet.write_string(row+1,col+11,str(mini_items['email']))
+                                    if "." in emails.group()[-1]:
+                                        new_emails = emails.group()[:-1]
+                                        email_validator = lepl.apps.rfc3696.Email()
+                                        if not email_validator(new_emails):
+                                            pass
+                                        else:
+                                            worksheet.write_string(row+1,col+11,str(new_emails))
+                                    else:               
+                                        email_string = emails.group()
+                                        email_validator = lepl.apps.rfc3696.Email()
+                                        if not email_validator(email_string):
+                                            pass
+                                        else:
+                                            worksheet.write_string(row+1,col+11,str(email_string))
                                 except:
                                     pass
                                 worksheet.write_string(row+1,col+12,str(mini_items['UID']))
