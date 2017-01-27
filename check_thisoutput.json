@@ -1,0 +1,128 @@
+{
+    "_type": "SearchResponse", 
+    "traceId": "E028B5AA62624886B08F9B7774111795", 
+    "pingUrlBase": "https://c.bingapis.com/api/ping?IG=105A84ABC2A14398984EC5DE5B4CCBE3&CID=1960A2755C30629C30CAA8625DDC6360&ID=", 
+    "answers": [
+        {
+            "webSearchUrl": "https://www.bing.com/api/beta/v4/applink/otherpage/search?q=loans&first=93", 
+            "_type": "AppLink/WebResponse", 
+            "answerType": "Web", 
+            "webResults": [
+                {
+                    "name": "Gloan: Loans", 
+                    "shortTitle": "Gloan: Loans", 
+                    "url": "https://www.gloan.com/", 
+                    "displayUrl": "https://www.gloan.com", 
+                    "snippet": "Gloan offers loans for anything you need to finance. Whether you need a personal or business loan, a credit card or a new car - even home loans! - we offer all the ...", 
+                    "siteNanme": "Gloan"
+                }, 
+                {
+                    "url": "https://www.rd.usda.gov/", 
+                    "snippet": "Community Facilites Direct Loans and Grants; Rural Community Development Initiative Grants; For Cooperatives. Rural Cooperative Development Grants; Value Added ...", 
+                    "name": "USDA Rural Development", 
+                    "shortTitle": "USDA to Help 821 Rural Small", 
+                    "displayUrl": "https://www.rd.usda.gov"
+                }, 
+                {
+                    "url": "https://www.bankofamerica.com/mortgage/", 
+                    "snippet": "Home Loans and Today's Rates from Bank of America Find competitive home loan rates and get the knowledge you need to help you make informed decisions. home loan, home ...", 
+                    "name": "Home Loans and Today's Rates from Bank of America", 
+                    "shortTitle": "Mortgage", 
+                    "displayUrl": "https://www.bankofamerica.com/mortgage"
+                }, 
+                {
+                    "url": "https://www.irs.gov/retirement-plans/retirement-plans-faqs-regarding-loans", 
+                    "snippet": "Retirement Plans FAQs regarding Loans. These frequently asked questions and answers provide general information and should not be cited as any type of legal authority.", 
+                    "name": "Retirement Plans FAQs regarding Loans - irs.gov", 
+                    "shortTitle": "IRS: Retirement Plans FAQs Regarding Loans - Irs.Gov", 
+                    "displayUrl": "https://www.irs.gov/.../retirement-plans-faqs-regarding-loans"
+                }, 
+                {
+                    "name": "Zopa loans \u2013 See rates & apply online | Zopa.com", 
+                    "shortTitle": "Zopa Loans - Personal Loans", 
+                    "url": "http://www.zopa.com/loans", 
+                    "displayUrl": "www.zopa.com/loans", 
+                    "snippet": "Looking for a personal loan from \u00a31,000 - \u00a325,000? Explore Zopa loans. See your personalised rates in 3 minutes, without affecting your credit score.", 
+                    "siteNanme": "Zopa"
+                }, 
+                {
+                    "name": "FHA Loan Refinance and Home Purchase Loans at FHA.com", 
+                    "shortTitle": "Loans For Home Owners", 
+                    "url": "https://www.fha.com/", 
+                    "displayUrl": "https://www.fha.com", 
+                    "snippet": "An FHA refinance mortgage allows for the refinance of a home with a low down payment. FHA loans are also great for the first time home buyer.", 
+                    "siteNanme": "FHA"
+                }, 
+                {
+                    "url": "http://www.dontbebroke.com/", 
+                    "snippet": "Dollar Loan Center offers Installment Loans up to $2500 and Car Title Loans up to 80% of your vehicle's value. Call us today at 866-550-4352 for info.", 
+                    "name": "Installment Loans & Car Title Loans | Dollar Loan Center", 
+                    "shortTitle": "Dollar Loan Center - Dontbebroke.Com", 
+                    "displayUrl": "www.dontbebroke.com"
+                }, 
+                {
+                    "url": "https://www.wellsfargo.com/goals-credit/", 
+                    "snippet": "Auto loans: 1-877-700-9345. Student loans: 1-800-378-5526. Personal lines and loans: 1-888-667-5250. Mortgage financing: 1-877-937-9357. Home equity financing:", 
+                    "name": "Borrowing and Credit \u2013 Wells Fargo", 
+                    "shortTitle": "Loans & Credit", 
+                    "displayUrl": "https://www.wellsfargo.com/goals-credit"
+                }, 
+                {
+                    "url": "https://www.sunloan.com/", 
+                    "snippet": "We offer our customers the most convenient installment loans, quick loans, and monthly payment loans. See how Sun Loan Company can provide you easy loans today.", 
+                    "name": "Apply for Installment Loan | Sun Loan Company", 
+                    "shortTitle": "Sunloan.Com - Get The Loan You Need!", 
+                    "displayUrl": "https://www.sunloan.com"
+                }, 
+                {
+                    "name": "Small Business Loans and Business Credit Insights from On ...", 
+                    "shortTitle": "Business Loans And Small Business Loans ... - On Deck Capital", 
+                    "url": "https://www.ondeck.com/", 
+                    "displayUrl": "https://www.ondeck.com", 
+                    "snippet": "OnDeck is the largest online small business lender in the U.S. issuing over $5 billion dollars in loans and trusted by over 50,000 small businesses providing them ...", 
+                    "siteNanme": "OnDeck"
+                }, 
+                {
+                    "name": "Federal Student Loan Programs", 
+                    "shortTitle": "Federal Student Loan Programs", 
+                    "url": "https://studentaid.ed.gov/sites/default/files/federal-loan-programs.pdf", 
+                    "docType": "Pdf", 
+                    "displayUrl": "https://studentaid.ed.gov/sites/default/files/federal-loan...", 
+                    "snippet": "For undergraduate, graduate, and professional degree students; financial need is not required For loans first disbursed on or after July 1, 2016, and", 
+                    "siteNanme": "US Department of Education"
+                }, 
+                {
+                    "url": "https://www.pioneermilitaryloans.com/", 
+                    "snippet": "Pioneer Military Loans helps military get $500 - $10,000 with fixed payments. Click here to apply in minutes.", 
+                    "name": "Military Loans - Fast & Easy to Apply - Pioneer Military ...", 
+                    "shortTitle": "Fast & Easy to Apply - Military Loans", 
+                    "displayUrl": "https://www.pioneermilitaryloans.com"
+                }, 
+                {
+                    "url": "https://www.usa.gov/credit", 
+                    "snippet": "Loans are divided into two categories: secured and unsecured. Secured Loans. With secured loans, your property and things you own are used as collateral.", 
+                    "name": "Credit Issues | USA.gov", 
+                    "shortTitle": "Credit", 
+                    "displayUrl": "https://www.usa.gov/credit"
+                }
+            ]
+        }, 
+        {
+            "webSearchUrl": "https://www.bing.com/api/beta/v4/applink/otherpage/search?q=loans&first=93", 
+            "_type": "AppLink/WebResponse", 
+            "answerType": "Web", 
+            "webResults": [
+                {
+                    "url": "https://www.bankrate.com/funnel/personal-loans/", 
+                    "snippet": "Today's personal loan rates - compare and apply for personal loans. It's fast and easy to compare loan rates from reputable banks and lenders.", 
+                    "name": "Best Personal Loans - Compare and Apply For Loans Online", 
+                    "shortTitle": "Personal Loans", 
+                    "displayUrl": "https://www.bankrate.com/funnel/personal-loans"
+                }
+            ]
+        }
+    ], 
+    "version": "4.0", 
+    "pageLoadPingUrl": "https://c.bingapis.com/api/ping/pageload?IG=105A84ABC2A14398984EC5DE5B4CCBE3&CID=1960A2755C30629C30CAA8625DDC6360&Type=Event.CPT&DATA=0", 
+    "impressionGuid": "105A84ABC2A14398984EC5DE5B4CCBE3"
+}

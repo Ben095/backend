@@ -11,7 +11,7 @@ class Result(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100))
     task_id = db.Column(db.String(500))
-    query = db.Column(db.String(500))
+    search_name  = db.Column(db.String(500))
 
 
 class InstagramResult(db.Model):
